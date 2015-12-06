@@ -6,7 +6,8 @@ var gulp = require("gulp"),
     concat = require("gulp-concat"),
     cssmin = require("gulp-cssmin"),
     watch = require('gulp-watch'),
-    uglify = require("gulp-uglify");
+    uglify = require("gulp-uglify"),
+    bundler = require('aurelia-bundler');
 
 var paths = {
     webroot: "./wwwroot/"
@@ -46,6 +47,40 @@ gulp.task('watch-spa-dev-files', function () {
         copyHomeSpaDevFileToRoot({ path: jsFilePath });
     });
     gulp.watch(paths.sourceHomeSpaMapFiles, copyHomeSpaDevFileToRoot);
+});
+
+var aureliaBundlerConfig = {
+    force: true,
+    packagePath: '.',
+    bundles: {
+        "lib/aurelia/aurelia.min": {
+            includes: [
+                "aurelia-animator-css",
+              "aurelia-bootstrapper",
+              "aurelia-fetch-client",
+              "aurelia-framework",
+              "aurelia-history-browser",
+              "aurelia-loader-default",
+              "aurelia-logging-console",
+              "aurelia-router",
+              "aurelia-templating-binding",
+              "aurelia-templating-resources",
+              "aurelia-templating-router"
+            ],
+            options: {
+                inject: true,
+                minify: true
+            }
+        }
+    }
+};
+
+gulp.task('bundle', function () {
+    return bundler.bundle(aureliaBundlerConfig);
+});
+
+gulp.task('unbundle', function () {
+    return bundler.unbundle(aureliaBundlerConfig);
 });
 
 gulp.task("clean:js", function (cb) {
